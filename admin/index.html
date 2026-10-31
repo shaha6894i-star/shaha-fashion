@@ -1,37 +1,255 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shaha Fashion Admin</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shaha Fashion | আপনার পছন্দ, আপনার স্টাইল</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;color:#222}
+header{background:#111;color:white;padding:18px 5%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+header h2{margin:0;letter-spacing:1px}
+nav a{color:white;text-decoration:none;margin-left:15px}
+.hero{background:linear-gradient(120deg,#171717,#444);color:white;text-align:center;padding:55px 15px}
+.hero h1{font-size:32px;margin:0 0 12px}
+.hero p{font-size:17px}
+section{padding:30px 5%;max-width:1200px;margin:auto}
+.section-title{text-align:center;margin:0 0 22px}
+.filters{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:22px}
+.filters button,.main-btn{background:#111;color:white;border:0;padding:10px 16px;border-radius:6px;cursor:pointer}
+.filters button.active{background:#c28b36}
+#search{display:block;width:100%;max-width:500px;margin:0 auto 22px;padding:13px;border:1px solid #ccc;border-radius:7px;font-size:16px}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.product-card{background:white;border-radius:10px;overflow:hidden;box-shadow:0 2px 10px #00000010}
+.product-card img{width:100%;height:210px;object-fit:cover;background:#eee}
+.product-body{padding:14px}
+.product-body h3{margin:0 0 8px;font-size:18px}
+.product-body p{color:#666;min-height:35px}
+.price{font-weight:bold;color:#a66c18;font-size:19px}
+.product-body button{width:100%;margin-top:8px;padding:11px;background:#111;color:white;border:0;border-radius:6px}
+.empty{text-align:center;padding:30px;color:#666;grid-column:1/-1}
+.cart-box,.order-box{background:white;padding:20px;border-radius:10px;margin-top:20px;box-shadow:0 2px 10px #00000010}
+.cart-item{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #eee}
+.cart-item button{background:#c62828;color:white;border:0;border-radius:5px;padding:5px 9px}
+input,textarea{width:100%;padding:12px;margin:7px 0;border:1px solid #ccc;border-radius:6px;font-size:16px}
+textarea{min-height:75px}
+.main-btn{width:100%;margin-top:10px;background:#16833d;font-size:16px}
+footer{background:#111;color:white;text-align:center;padding:22px;margin-top:35px}
+#loading{text-align:center;padding:25px}
+@media(max-width:500px){.hero h1{font-size:25px}header{justify-content:center}nav a{margin:0 7px}}
+</style>
 </head>
 <body>
-  <div class="admin-container">
-    <h1>Shaha Fashion</h1>
-    <h2>Admin Panel Login</h2>
 
-    <form id="loginForm">
-      <input
-        type="email"
-        id="email"
-        placeholder="Admin Email"
-        required
-      >
-      <input
-        type="password"
-        id="password"
-        placeholder="Password"
-        required
-      >
-      <button type="submit">Login</button>
-    </form>
+<header>
+  <h2>SHAHA FASHION</h2>
+  <nav>
+    <a href="#home">হোম</a>
+    <a href="#products">পণ্য</a>
+    <a href="#cart">কার্ট</a>
+    <a href="#contact">যোগাযোগ</a>
+  </nav>
+</header>
 
-    <p id="message"></p>
+<div class="hero" id="home">
+  <h1>আপনার পছন্দ, আপনার স্টাইল!</h1>
+  <p>ফ্যাশন, গ্যাজেট, বিউটি ও লাইফস্টাইল পণ্য — সব এক জায়গায়</p>
+</div>
+
+<section id="products">
+  <h2 class="section-title">আমাদের পণ্যসমূহ</h2>
+  <input id="search" type="search" placeholder="পণ্যের নাম লিখে খুঁজুন...">
+
+  <div class="filters">
+    <button class="active" data-category="সব">সব</button>
+    <button data-category="ফ্যাশন">ফ্যাশন</button>
+    <button data-category="গ্যাজেট">গ্যাজেট</button>
+    <button data-category="বিউটি">বিউটি</button>
+    <button data-category="লাইফস্টাইল">লাইফস্টাইল</button>
   </div>
 
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="admin.js"></script>
+  <div id="loading">পণ্য লোড হচ্ছে...</div>
+  <div class="products" id="productList"></div>
+</section>
+
+<section id="cart">
+  <h2 class="section-title">আপনার শপিং কার্ট (<span id="cartCount">0</span>)</h2>
+  <div class="cart-box">
+    <div id="cartList">কার্টে এখনো কোনো পণ্য নেই।</div>
+    <h3>সর্বমোট: ৳<span id="cartTotal">0</span></h3>
+  </div>
+
+  <div class="order-box" id="contact">
+    <h2>অর্ডার করতে তথ্য দিন</h2>
+    <input id="customerName" placeholder="আপনার নাম" required>
+    <input id="customerPhone" type="tel" placeholder="মোবাইল নম্বর" required>
+    <textarea id="customerAddress" placeholder="সম্পূর্ণ ঠিকানা" required></textarea>
+    <textarea id="customerNote" placeholder="অতিরিক্ত কিছু জানাতে চাইলে লিখুন"></textarea>
+    <button class="main-btn" onclick="checkout()">WhatsApp-এ অর্ডার করুন</button>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 SHAHA FASHION — All Rights Reserved</p>
+  <p>অর্ডার ও যোগাযোগ: 01314262299</p>
+</footer>
+
+<script type="module">
+import { db } from "./admin/firebase.js";
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const WHATSAPP = "8801314262299";
+let products = [];
+let cart = [];
+let activeCategory = "সব";
+
+const productList = document.getElementById("productList");
+const loading = document.getElementById("loading");
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
+
+async function loadProducts() {
+  try {
+    const snapshot = await getDocs(collection(db, "products"));
+    products = snapshot.docs.map(item => ({id:item.id, ...item.data()}));
+    loading.style.display = "none";
+    showProducts();
+  } catch (error) {
+    console.error(error);
+    loading.textContent = "পণ্য লোড করা যায়নি। কিছুক্ষণ পর আবার চেষ্টা করুন।";
+  }
+}
+
+function showProducts() {
+  const searchText = document.getElementById("search").value.toLowerCase().trim();
+
+  const filtered = products.filter(p => {
+    const categoryMatch = activeCategory === "সব" || p.category === activeCategory;
+    const searchMatch = String(p.name || "").toLowerCase().includes(searchText);
+    return categoryMatch && searchMatch;
+  });
+
+  productList.innerHTML = "";
+
+  if (!filtered.length) {
+    productList.innerHTML = '<div class="empty">এই মুহূর্তে কোনো পণ্য পাওয়া যায়নি।</div>';
+    return;
+  }
+
+  filtered.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "product-card";
+    const image = escapeHTML(p.image || "");
+    card.innerHTML = `
+      <img src="${image}" alt="${escapeHTML(p.name)}" onerror="this.src='https://placehold.co/600x400?text=Shaha+Fashion'">
+      <div class="product-body">
+        <h3>${escapeHTML(p.name)}</h3>
+        <p>${escapeHTML(p.description || "")}</p>
+        <div class="price">৳${Number(p.price || 0).toLocaleString("en-BD")}</div>
+        <button type="button" data-add="${escapeHTML(p.id)}">কার্টে যোগ করুন</button>
+      </div>`;
+    productList.appendChild(card);
+  });
+
+  productList.querySelectorAll("[data-add]").forEach(button => {
+    button.addEventListener("click", () => addToCart(button.dataset.add));
+  });
+}
+
+function addToCart(id) {
+  const product = products.find(p => p.id === id);
+  if (!product) return;
+
+  const existing = cart.find(item => item.id === id);
+  if (existing) existing.qty++;
+  else cart.push({...product, qty:1});
+
+  showCart();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(item => item.id !== id);
+  showCart();
+}
+
+function showCart() {
+  const cartList = document.getElementById("cartList");
+  const count = cart.reduce((sum,item) => sum + item.qty, 0);
+  const total = cart.reduce((sum,item) => sum + Number(item.price || 0) * item.qty, 0);
+
+  document.getElementById("cartCount").textContent = count;
+  document.getElementById("cartTotal").textContent = total.toLocaleString("en-BD");
+
+  if (!cart.length) {
+    cartList.textContent = "কার্টে এখনো কোনো পণ্য নেই।";
+    return;
+  }
+
+  cartList.innerHTML = "";
+  cart.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "cart-item";
+    row.innerHTML = `
+      <span>${escapeHTML(item.name)} × ${item.qty} — ৳${(Number(item.price)*item.qty).toLocaleString("en-BD")}</span>
+      <button type="button" data-remove="${escapeHTML(item.id)}">বাদ দিন</button>`;
+    cartList.appendChild(row);
+  });
+
+  cartList.querySelectorAll("[data-remove]").forEach(button => {
+    button.addEventListener("click", () => removeFromCart(button.dataset.remove));
+  });
+}
+
+window.checkout = function() {
+  if (!cart.length) {
+    alert("প্রথমে কার্টে পণ্য যোগ করুন।");
+    return;
+  }
+
+  const name = document.getElementById("customerName").value.trim();
+  const phone = document.getElementById("customerPhone").value.trim();
+  const address = document.getElementById("customerAddress").value.trim();
+  const note = document.getElementById("customerNote").value.trim();
+
+  if (!name || !phone || !address) {
+    alert("নাম, মোবাইল নম্বর ও ঠিকানা পূরণ করুন।");
+    return;
+  }
+
+  let message = "নতুন অর্ডার - SHAHA FASHION\n\n";
+  message += "নাম: " + name + "\n";
+  message += "মোবাইল: " + phone + "\n";
+  message += "ঠিকানা: " + address + "\n\n";
+  message += "পণ্যের তালিকা:\n";
+
+  cart.forEach((item,index) => {
+    message += (index+1) + ". " + item.name + " × " + item.qty;
+    message += " = ৳" + (Number(item.price)*item.qty) + "\n";
+  });
+
+  const total = cart.reduce((sum,item) => sum + Number(item.price)*item.qty, 0);
+  message += "\nসর্বমোট: ৳" + total + "\n";
+  if (note) message += "\nনোট: " + note;
+
+  window.open("https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(message), "_blank");
+};
+
+document.getElementById("search").addEventListener("input", showProducts);
+
+document.querySelectorAll(".filters button").forEach(button => {
+  button.addEventListener("click", () => {
+    activeCategory = button.dataset.category;
+    document.querySelectorAll(".filters button").forEach(b => b.classList.remove("active"));
+    button.classList.add("active");
+    showProducts();
+  });
+});
+
+loadProducts();
+</script>
 </body>
-</html>
+      </html>
