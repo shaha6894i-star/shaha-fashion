@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shaha Fashion | Online Shop</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f8f8f5;color:#20352a}
+header{background:#20352a;color:white;padding:18px 5%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.logo{font-size:23px;font-weight:bold;letter-spacing:1px}
+.logo span{color:#d9a17d}
+nav a{color:white;text-decoration:none;margin:0 8px;font-size:14px}
+.hero{background:#eae6dc;padding:55px 7%;text-align:center}
+.hero h1{font-size:38px;margin:8px}
+.hero p{color:#65736a;line-height:1.7}
+.btn{background:#20352a;color:white;border:0;padding:12px 19px;border-radius:5px;cursor:pointer}
+.section{padding:35px 5%}
+.section h2{text-align:center}
+.search{width:100%;max-width:420px;display:block;margin:20px auto;padding:12px;border:1px solid #ddd;border-radius:5px}
+.filters{text-align:center;margin:20px}
+.filters button{margin:4px;padding:9px 14px;border:1px solid #20352a;border-radius:20px;background:white;cursor:pointer}
+.filters button.active{background:#20352a;color:white}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:15px}
+.card{background:white;border:1px solid #eee;border-radius:8px;overflow:hidden;text-align:center;padding-bottom:15px}
+.pic{height:145px;background:#eee8df;display:grid;place-items:center;font-size:55px}
+.card h3{font-size:16px;margin:12px 5px}
+.price{font-weight:bold;color:#a76d48;margin:8px}
+.card button{margin:4px;padding:9px;border:0;border-radius:4px;background:#20352a;color:white;cursor:pointer}
+.cart{background:white;padding:18px;border-radius:8px;margin-top:25px}
+.cart-item{padding:8px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:8px}
+.cart-item button{border:0;background:#eee;padding:5px}
+input,textarea{font:inherit}
+.form input,.form textarea{display:block;width:100%;padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:5px}
+.form{max-width:500px;margin:20px auto;background:white;padding:18px;border-radius:8px}
+footer{background:#20352a;color:white;text-align:center;padding:25px;margin-top:30px}
+footer p{color:#d2ddd5}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">SHAHA <span>FASHION</span></div>
+<nav><a href="#home">Home</a><a href="#products">Products</a><a href="#contact">Contact</a></nav>
+</header>
+
+<section class="hero" id="home">
+<p>WELCOME TO SHAHA FASHION</p>
+<h1>আপনার পছন্দ, আপনার স্টাইল!</h1>
+<p>Fashion, Gadgets, Beauty ও Lifestyle Products এক জায়গায়।</p>
+<a href="#products"><button class="btn">Shop Now →</button></a>
+</section>
+
+<section class="section" id="products">
+<h2>Our Products</h2>
+<input class="search" id="search" placeholder="পণ্য খুঁজুন..." oninput="showProducts()">
+<div class="filters">
+<button class="active" onclick="filter('সব',this)">সব</button>
+<button onclick="filter('ফ্যাশন',this)">ফ্যাশন</button>
+<button onclick="filter('গ্যাজেট',this)">গ্যাজেট</button>
+<button onclick="filter('বিউটি',this)">বিউটি</button>
+<button onclick="filter('লাইফস্টাইল',this)">লাইফস্টাইল</button>
+</div>
+<div class="products" id="productsList"></div>
+
+<div class="cart">
+<h2>🛒 Shopping Cart (<span id="count">0</span>)</h2>
+<div id="cartList">কার্ট খালি</div>
+<h3>সর্বমোট: ৳<span id="total">0</span></h3>
+<button class="btn" onclick="checkout()">অর্ডার করুন</button>
+</div>
+</section>
+
+<section class="section" id="contact">
+<h2>Customer Order Form</h2>
+<div class="form">
+<input id="name" placeholder="আপনার নাম" required>
+<input id="phone" placeholder="মোবাইল নম্বর" required>
+<textarea id="address" placeholder="সম্পূর্ণ ঠিকানা" rows="3"></textarea>
+<textarea id="note" placeholder="অর্ডার নোট (ঐচ্ছিক)" rows="2"></textarea>
+<button class="btn" style="width:100%" onclick="checkout()">WhatsApp Order</button>
+</div>
+</section>
+
+<footer>
+<h2>SHAHA FASHION</h2>
+<p>Your Style, Your Choice.</p>
+<p>বাংলাদেশে অনলাইন শপিং</p>
+<p>© 2026 Shaha Fashion</p>
+</footer>
+
+<script>
+const WHATSAPP="8801XXXXXXXXX"; // এখানে নিজের নম্বর বসাবে
+
+const products=[
+{id:1,name:"Classic Fashion Shirt",cat:"ফ্যাশন",price:850,icon:"👕"},
+{id:2,name:"Ladies Fashion Bag",cat:"ফ্যাশন",price:1250,icon:"👜"},
+{id:3,name:"Bluetooth Earbuds",cat:"গ্যাজেট",price:1450,icon:"🎧"},
+{id:4,name:"Smart Watch",cat:"গ্যাজেট",price:1850,icon:"⌚"},
+{id:5,name:"Beauty Care Set",cat:"বিউটি",price:990,icon:"🧴"},
+{id:6,name:"Sunglasses",cat:"ফ্যাশন",price:650,icon:"🕶️"},
+{id:7,name:"Water Bottle",cat:"লাইফস্টাইল",price:450,icon:"🥤"},
+{id:8,name:"Backpack",cat:"লাইফস্টাইল",price:1100,icon:"🎒"}
+];
+
+let cart=[];
+let category="সব";
+
+function showProducts(){
+let q=document.getElementById("search").value.toLowerCase();
+let list=products.filter(p=>(category==="সব"||p.cat===category)&&p.name.toLowerCase().includes(q));
+document.getElementById("productsList").innerHTML=list.map(p=>`
+<div class="card">
+<div class="pic">${p.icon}</div>
+<h3>${p.name}</h3>
+<div class="price">৳${p.price}</div>
+<button onclick="add(${p.id})">কার্টে যোগ</button>
+<button onclick="buy(${p.id})">Buy Now</button>
+</div>`).join("")||"পণ্য পাওয়া যায়নি";
+}
+
+function filter(c,btn){
+category=c;
+document.querySelectorAll(".filters button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+showProducts();
+}
+
+function add(id){
+let item=cart.find(p=>p.id===id);
+if(item)item.qty++;
+else cart.push({...products.find(p=>p.id===id),qty:1});
+showCart();
+}
+
+function buy(id){
+cart=[{...products.find(p=>p.id===id),qty:1}];
+showCart();
+document.getElementById("contact").scrollIntoView({behavior:"smooth"});
+}
+
+function showCart(){
+let total=cart.reduce((s,p)=>s+p.price*p.qty,0);
+document.getElementById("count").innerText=cart.reduce((s,p)=>s+p.qty,0);
+document.getElementById("total").innerText=total;
+document.getElementById("cartList").innerHTML=cart.length?cart.map(p=>`
+<div class="cart-item">
+<span>${p.name} × ${p.qty} = ৳${p.price*p.qty}</span>
+<button onclick="removeItem(${p.id})">বাদ দিন</button>
+</div>`).join(""):"কার্ট খালি";
+}
+
+function removeItem(id){
+cart=cart.filter(p=>p.id!==id);
+showCart();
+}
+
+function checkout(){
+if(!cart.length){alert("আগে পণ্য কার্টে যোগ করুন");return}
+let name=document.getElementById("name").value;
+let phone=document.getElementById("phone").value;
+let address=document.getElementById("address").value;
+let note=document.getElementById("note").value;
+if(!name||!phone||!address){
+alert("নাম, মোবাইল ও ঠিকানা পূরণ করুন");
+document.getElementById("contact").scrollIntoView({behavior:"smooth"});
+return;
+}
+if(!/^8801[3-9]\d{8}$/.test(WHATSAPP)){
+alert("প্রথমে কোডে নিজের WhatsApp নম্বর বসান");
+return;
+}
+let items=cart.map(p=>p.name+" x "+p.qty+" = ৳"+p.price*p.qty).join("\n");
+let total=cart.reduce((s,p)=>s+p.price*p.qty,0);
+let message=`Shaha Fashion Order\n${items}\nTotal: ৳${total}\nName: ${name}\nPhone: ${phone}\nAddress: ${address}\nNote: ${note}`;
+window.open("https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(message),"_blank");
+}
+showProducts();
+showCart();
+</script>
+</body>
+</html>
