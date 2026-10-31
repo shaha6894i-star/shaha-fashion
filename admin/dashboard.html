@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shaha Fashion Dashboard</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      color: #222;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    header h2 {
+      margin: 0;
+    }
+
+    button {
+      background: #dc2626;
+      color: white;
+      border: 0;
+      padding: 11px 18px;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+
+    main {
+      padding: 25px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      margin-top: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px #00000010;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h2>Shaha Fashion Admin</h2>
+    <button id="logoutBtn">Logout</button>
+  </header>
+
+  <main>
+    <h1>Dashboard</h1>
+
+    <div class="card">
+      <h2>Welcome to Shaha Fashion!</h2>
+      <p>Your Admin Panel is connected to Firebase.</p>
+      <p id="adminEmail">Checking login...</p>
+    </div>
+
+    <div class="card">
+      <h2>Product Management</h2>
+      <p>Product management will be added next.</p>
+    </div>
+
+    <div class="card">
+      <h2>Order Management</h2>
+      <p>Order management will be added next.</p>
+    </div>
+
+    <p id="message"></p>
+  </main>
+
+  <script type="module">
+    import { auth } from "./firebase.js";
+
+    import {
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const ADMIN_UID = "Rr70hIlAWRNE6CTLhBQvvNIuop72";
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user || user.uid !== ADMIN_UID) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      document.getElementById("adminEmail").textContent =
+        "Logged in as: " + user.email;
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
